@@ -8,6 +8,7 @@ license=('GPL')
 depends=(bash python rsync coreutils findutils gawk sed python-docopt)
 optdepends=('openssh: backup to remote location')
 source=("$pkgname::git+http://github.com/ingolemo/cmd-utils")
+md5sums=('SKIP')
 
 package() {
 	cd $srcdir/cmd-utils
