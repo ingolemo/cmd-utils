@@ -9,8 +9,8 @@
 /usr/bin/echo $PATH |
 	/usr/bin/tr ':' '\n' |
 	/usr/bin/cat "$1" - |
-	$HOME/.local/bin/varreplace --env |
-	$HOME/.local/bin/rmdups |
-	$HOME/.local/bin/decomment |
+	/usr/bin/varreplace --env |
+	/usr/bin/rmdups |
+	/usr/bin/decomment |
 	/usr/bin/xargs echo |
 	/usr/bin/tr ' ' ':'
