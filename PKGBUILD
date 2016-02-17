@@ -14,6 +14,6 @@ package() {
 	cd $srcdir/cmd-utils
 	for file in *.py *.sh; do
 		msg "Installing $file"
-		install -Dm744 "$file" "$pkgdir"/usr/bin/"${file%.*}"
+		install -Dm755 "$file" "$pkgdir"/usr/bin/"${file%.*}"
 	done
 }
