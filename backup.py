@@ -17,19 +17,19 @@ import argparse
 import shlex
 
 # args to pass to rsync
-RSYNC_ARGS = [
-    '--archive',
-    '--delete',
-    '--delete-excluded',
-    '--exclude-from', '/home/ingolemo/doc/backup_excludes',
-    '--hard-links',
-    '--human-readable',
-    '--inplace',
-    '--itemize-changes',
-    '--numeric-ids',
-    '--one-file-system',
-    '--verbose',
-]
+RSYNC_ARGS = {
+    '--archive': None,
+    '--delete': None,
+    '--delete-excluded': None,
+    '--exclude-from': os.path.expanduser('~/doc/backup_excludes'),
+    '--hard-links': None,
+    '--human-readable': None,
+    '--inplace': None,
+    '--itemize-changes': None,
+    '--numeric-ids': None,
+    '--one-file-system': None,
+    '--verbose': None,
+}
 
 # Offsets from now for which to keep a backup around
 OFFSETS = {
@@ -47,7 +47,7 @@ OFFSETS = {
     # months
     datetime.timedelta(days=30),
     datetime.timedelta(days=30 * 2),
-    datetime.timedelta(days=30 * 3),
+    datetime.timedelta(days=30 * 4),
     datetime.timedelta(days=30 * 6),
     # years
     datetime.timedelta(days=365),
@@ -62,12 +62,15 @@ OFFSETS = {
 
 def build_synccmd(source, dest, linkdest=False, remote=False):
     'builds rsync command list from arguments'
-    linkd = ['--link-dest={}'.format(linkdest)] if linkdest else []
-    prog = ['--progress'] if sys.stdout.isatty() else []
+    rargs = [item for items in RSYNC_ARGS.items() for item in items
+             if item is not None]
+    if linkdest:
+        rargs.append('--link-dest={}'.format(linkdest))
+    if sys.stdout.isatty():
+        rargs.append('--progress')
     if remote:
         dest = '{}:{}'.format(remote, dest)
-    cmd = ['/usr/bin/rsync'] + \
-        RSYNC_ARGS + linkd + prog + [source] + [dest]
+    cmd = ['/usr/bin/rsync'] + rargs + [source, dest]
     return cmd
 
 
