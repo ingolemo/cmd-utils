@@ -136,7 +136,7 @@ def main(argv):
     # make symlink to most recent backup
     symlink_loc = os.path.join(args.destination, 'current')
     execute(make_cmd('rm', '-f', symlink_loc))
-    execute(make_cmd('ln', '-s', curr, symlink_loc))
+    execute(make_cmd('ln', '-sr', curr, symlink_loc))
 
     # remove unwanted directories
     wanted = set(wanted_backups(backups, now, args.date_format))
