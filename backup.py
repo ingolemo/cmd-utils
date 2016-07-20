@@ -116,6 +116,9 @@ def main(argv):
         else:
             return cmd
 
+    if execute(make_cmd('test', '-d', args.destination)) != 0:
+        return 'dest does not exist'
+
     # get existing directories
     backups = execute(make_cmd(
         'find', args.destination,
