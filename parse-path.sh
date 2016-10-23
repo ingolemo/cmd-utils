@@ -6,11 +6,22 @@
 # intended use:
 # PATH="$(parse-path pathfile)"
 
-/usr/bin/echo $PATH |
-	/usr/bin/tr ':' '\n' |
-	/usr/bin/cat "$1" - |
-	/usr/bin/varreplace --env |
-	/usr/bin/rmdups |
-	/usr/bin/decomment |
-	/usr/bin/xargs echo |
-	/usr/bin/tr ' ' ':'
+(
+ORIGPATH="$PATH"
+
+# if we can't find custom tools in path then we can do a little hack to
+# see if they are in the path file's lines. This is a hack because it
+# might do various forms of expansion that we don't want.
+if ! (which varreplace && which rmdups && which decomment) >/dev/null 2>&1; then
+	PATH="$(eval echo "$(cat "$1" | xargs echo | tr ' ' ':')"):$ORIGPATH"
+fi
+
+echo "$ORIGPATH" |
+	tr ':' '\n' |
+	cat "$1" - |
+	varreplace --env |
+	rmdups |
+	decomment |
+	xargs echo |
+	tr ' ' ':'
+)
