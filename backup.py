@@ -72,12 +72,12 @@ OFFSETS = {
 }
 
 
-def build_synccmd(source, dest, linkdest=False, remote=False):
+def build_synccmd(source, dest, linkdests=(), remote=False):
     'builds rsync command list from arguments'
     rargs = [item for items in RSYNC_ARGS.items() for item in items
              if item is not None]
-    if linkdest:
-        rargs.append('--link-dest={}'.format(linkdest))
+    for linkdest in linkdests:
+        rargs.extend(['--link-dest', linkdest])
     if sys.stdout.isatty():
         rargs.append('--progress')
     if remote:
@@ -137,7 +137,6 @@ def main(argv):
         '-maxdepth', '1',
         '-mindepth', '1',
         '-type', 'd'), output=True)
-    prev = max(backups, key=os.path.basename) if backups else None
     curr = os.path.join(
         args.destination, now.strftime(args.date_format))
 
@@ -146,7 +145,7 @@ def main(argv):
 
     # rsync
     execute(
-        build_synccmd(args.source, curr, linkdest=prev, remote=args.remote))
+        build_synccmd(args.source, curr, linkdests=backups, remote=args.remote))
 
     # make symlink to most recent backup
     symlink_loc = os.path.join(args.destination, 'current')
