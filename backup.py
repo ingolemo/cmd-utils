@@ -18,7 +18,7 @@ import shlex
 
 # args to pass to rsync
 RSYNC_ARGS = {
-    '--archive': None,
+    '--archive': None,  # -rlptgoD
     '--delete': None,
     '--delete-excluded': None,
     '--exclude-from': os.path.expanduser('~/doc/backup_excludes'),
@@ -26,8 +26,11 @@ RSYNC_ARGS = {
     '--human-readable': None,
     '--inplace': None,
     '--itemize-changes': None,
+    '--max-size': '2g',
     '--numeric-ids': None,
     '--one-file-system': None,
+    '--preallocate': None,
+    '--relative': None,
     '--verbose': None,
 }
 
