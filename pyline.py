@@ -12,12 +12,14 @@ For example, this only prints even numbered lines:
 
 The following modules are auto-imported for ease of use:
 
+* json
 * math
 * os
 * subprocess
 * sys
 """
 
+import json
 import math
 import os
 import subprocess
