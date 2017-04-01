@@ -33,8 +33,15 @@ RSYNC_ARGS = {
 
 # Offsets from now for which to keep a backup around
 OFFSETS = {
+    # minutes
+    datetime.timedelta(minutes=1),
+    datetime.timedelta(minutes=5),
+    datetime.timedelta(minutes=10),
+    datetime.timedelta(minutes=30),
+    # hours
     datetime.timedelta(hours=1),
     datetime.timedelta(hours=2),
+    datetime.timedelta(hours=3),
     datetime.timedelta(hours=4),
     datetime.timedelta(hours=6),
     datetime.timedelta(hours=12),
@@ -45,17 +52,22 @@ OFFSETS = {
     datetime.timedelta(days=7),
     datetime.timedelta(days=14),
     # months
-    datetime.timedelta(days=30),
+    datetime.timedelta(days=30 * 1),
     datetime.timedelta(days=30 * 2),
+    datetime.timedelta(days=30 * 3),
     datetime.timedelta(days=30 * 4),
     datetime.timedelta(days=30 * 6),
     # years
-    datetime.timedelta(days=365),
+    datetime.timedelta(days=365 * 1),
     datetime.timedelta(days=365 * 2),
+    datetime.timedelta(days=365 * 3),
+    datetime.timedelta(days=365 * 4),
     datetime.timedelta(days=365 * 5),
     datetime.timedelta(days=365 * 10),
+    datetime.timedelta(days=365 * 15),
     datetime.timedelta(days=365 * 20),
     datetime.timedelta(days=365 * 50),
+    datetime.timedelta(days=365 * 75),
     datetime.timedelta(days=365 * 100),
 }
 
