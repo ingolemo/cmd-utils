@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-
+# see `backup --help` for full options
 '''
-Usage:
-    backup [options] <source> <dest>
-
-Options:
-    --remote <server>       Remote server for ssh
-    --date-format <format>  Date formats for backup folders
+Make a backup of the source directory to the destination using
+rsync. Creates a directory in the destination with the date that the
+backup was made. If the destination contains previous backups then the
+new backup will be done incrementally using the --link-dest feature of
+rsync to create hardlinks to files that have not changed. It will also
+delete backups that are too old using a sort of exponential backoff to
+keep fewer backups as they go further into the past.
 '''
 
 import os
@@ -130,11 +131,17 @@ def wanted_backups(all_backups, now, datefmt):
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('source')
     parser.add_argument('destination')
-    parser.add_argument('--remote', default=None)
-    parser.add_argument('--date-format', default='%Y_%m_%d_%H_%M_%S')
+    parser.add_argument(
+        '--remote', default=None, help='remote server for ssh'
+    )
+    parser.add_argument(
+        '--date-format',
+        default='%Y_%m_%d_%H_%M_%S',
+        help='Date format for backup folders (default: "%%Y_%%m_%%d_%%H_%%M_%%S").'
+    )
     return parser.parse_args(args[1:])
 
 

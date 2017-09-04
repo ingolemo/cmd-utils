@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+'''Usage: teletype
+
+A filter that outputs stdin one charactor at a time to simulate someone
+typing at an old teletype machine.
+'''
 
 import sys
 import time

@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+'''Usage: timer
+
+Counts the time since this program was started, printing it to stdout
+every second.'''
 
 import sys
 import time
@@ -6,6 +10,9 @@ import datetime
 
 
 def main(argv):
+    if '-h' in argv or '--help' in argv:
+        return __doc__
+
     start = datetime.datetime.now()
 
     while True:

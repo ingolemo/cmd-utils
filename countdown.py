@@ -1,4 +1,20 @@
 #!/usr/bin/env python
+'''Usage: countdown [hours]h[minutes]m[seconds]s
+
+Takes a time specifier and counts down that amount of time, exiting
+once the time has expired. Like `sleep`, but with a progress counter
+and takes times in a more human readable format.
+
+The time should be given with a number followed by a letter indicating
+the period. More than one time period can be given at once. If a number is given, but no letter then m (minutes) is assumed. Examples:
+
+    countdown 3m                (3 minutes)
+    countdown 10                (10 minutes)
+    countdown 1h                (1 hour)
+    countdown 9h30m             (9 and a half hours)
+    countdown 1h30              (1 hour and 30 minutes)
+    countdown 1h30s             (1 hour and 30 seconds)
+'''
 
 import datetime
 import re
@@ -18,10 +34,13 @@ def parse(args):
     return datetime.timedelta(seconds=(h * 60 + m) * 60 + s)
 
 def main(argv):
+    if '-h' in argv or '--help' in argv:
+        return __doc__
+
     try:
         length = parse(argv)
     except (IndexError, ValueError):
-        return 'usage: countdown [hours]h[minutes]m[seconds]s'
+        return __doc__
     start = datetime.datetime.now()
 
     while True:

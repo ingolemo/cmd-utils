@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+'''Usage: linewise <subcommand>...
+
+Runs a sub-command for each line in stdin, writing that line into the
+stdin of the sub-command and concatenating the outputs. Similar to xargs except that it uses stdin instead of command-line arguments.
+'''
 
 import sys
 import subprocess
@@ -13,9 +18,12 @@ def pipe(cmd, input):
 
 
 def main(argv):
-    cmd = argv[1:]
+    if not argv[1:] or '-h' in argv or '--help' in argv:
+        return __doc__
+
     for line in sys.stdin:
-        sys.stdout.write(pipe(cmd, line))
+        sys.stdout.write(pipe(argv[1:], line))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
+'''Usage: timepick [second|minute|hour|day|week]
 
-# picks a single line from stdin based on the current time
+A filter that picks a single line from stdin based on the current time.
 
-# has an advantage over random selection in that it's
-# cyclical and thus no clustering or repetition of
-# the selections
-
-# seems 'more random' to people
+This has an advantage over random selection in that it's cyclical and
+thus no clustering or repetition of the selections; seems 'more random'
+to people.
+'''
 
 import os
 import sys
@@ -27,6 +27,9 @@ def numSinceEpoch(period):
 
 
 def main(argv):
+    if not argv[1:] or '-h' in argv or '--help' in argv:
+        return __doc__
+
     try:
         div = argv[1]
         if div.endswith('s'):

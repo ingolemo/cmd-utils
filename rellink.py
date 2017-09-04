@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+'''Create a relative symbolic link. Unlike `ln -s`, both the target and
+the name should be specified relative to the current working directory.'''
 
 import os
 import sys
@@ -13,10 +15,15 @@ def parse_name(name, target):
 
 
 def main(argv):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('target')
     parser.add_argument('name')
-    parser.add_argument('-a', '--absolute', action='store_true')
+    parser.add_argument(
+        '-a',
+        '--absolute',
+        action='store_true',
+        help='Have the link be absolute instead'
+    )
     opts = parser.parse_args(argv[1:])
 
     name = parse_name(opts.name, opts.target)

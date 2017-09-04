@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+'''A filter that aligns the columns in stdin.'''
 
 import argparse
 import itertools
@@ -35,7 +36,7 @@ def print_table(table, widths, pad):
 
 
 def main(argv):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-p', '--padding', default=1)
     parser.add_argument('-s', '--separator', default=None)
     parser.add_argument('-j', '--join-empty', action='store_true')

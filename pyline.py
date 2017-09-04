@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
-"""
-usage: pyline <statement>
+'''Usage: pyline <statement>
 
 Takes a python statement as an argument and runs it for each line in
 stdin. The variable `i` holds the number of the current line.
@@ -17,7 +15,7 @@ The following modules are auto-imported for ease of use:
 * os
 * subprocess
 * sys
-"""
+'''
 
 import json
 import math
@@ -27,7 +25,9 @@ import sys
 
 
 def main(argv):
-    'main'
+    if not argv[1:] or '-h' in argv or '--help' in argv:
+        return __doc__
+
     for i, line in enumerate(sys.stdin):
         line = line.strip('\n')
         exec(argv[1])

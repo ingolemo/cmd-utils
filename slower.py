@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+'''Usage: slower [wait]
+
+A filter that outputs one line every \`wait\` seconds. Default wait is
+1 second.
+'''
 
 import sys
 import time
@@ -11,6 +16,9 @@ def slower(wait):
 
 
 def main(argv):
+    if '-h' in argv or '--help' in argv:
+        return __doc__
+
     try:
         wait = float(argv[1])
     except (IndexError, ValueError):

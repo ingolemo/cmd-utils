@@ -20,6 +20,9 @@ Usage:
     symtag leasttagged <base>
     symtag listalltags <base>
     symtag listtags <base> <file>
+
+Symtag is a symlink based database. <base> should be a directory that
+is the base of the database.
 '''
 
 logging.basicConfig(

@@ -1,4 +1,16 @@
 #!/usr/bin/env python
+'''Usage: varreplace (--env|[VARIABLE=VALUE]...)
+
+Replaces variables in stdin with their values. Many variables can be given
+on the command line in the same format as expected by `export`, or you
+can use the --env flag to use variables from the environment. Variables
+in stdin are strings like $var or ${var}.
+
+Example:
+    $ echo 'Praise be to ${DIETY}.' | varreplace DIETY=Iluvatar
+    Praise be to Iluvatar.
+    $ echo 'Display number: "$DISPLAY"' | varreplace --env
+    Display number: ":0" '''
 
 import os
 import sys
@@ -22,6 +34,9 @@ def variable_variants(var):
 
 
 def main(argv):
+    if not argv[1:] or '-h' in argv or '--help' in argv:
+        return __doc__
+
     replacements = dict(parse_args(argv))
 
     for line in sys.stdin:

@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-
 """
-Usage: chronic program [args]+
+Usage: chronic <program> [args]...
 
-Runs a program, capturing its stdio, and only outputs it if the program
-fails (i.e. the program returns a non-zero return code or outputs
-anything to stderr).
+Runs a program, capturing its stdout and stderr, and only outputs it if
+the program fails (i.e. the program returns a non-zero return code or
+writes anything at all to stderr).
+
+The stdio will also be written to a log file in `~/.cache/chronic`
+for debugging purposes, regardless whether it failed or not.
 
 Useful for running processes under cron.
 """
@@ -83,7 +85,9 @@ def xdg_cache_dir(name):
 
 
 def main(argv):
-    "main"
+    if not argv[1:] or '-h' in argv or '--help' in argv:
+        return __doc__
+
     cmd = argv[1:]
     logfile = os.path.join(xdg_cache_dir('chronic'), get_logfile(cmd))
     retcode, output = run_cmd(cmd, logfile)
