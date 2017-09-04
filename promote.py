@@ -18,13 +18,14 @@ def main(argv):
     if not argv[1:] or '-h' in argv or '--help' in argv:
         return __doc__
 
-    item = ' '.join(argv[1:]) + '\n'
-    lines = list(sys.stdin)
+    item = ' '.join(argv[1:])
+    lines = [l.strip('\n') for l in sys.stdin]
     if item in lines:
-        sys.stdout.write(item)
+        print(item)
     for line in lines:
         if line != item:
-            sys.stdout.write(line)
+            print(line)
+
 
 if __name__ == '__main__':
     try:
