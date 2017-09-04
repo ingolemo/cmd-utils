@@ -12,8 +12,8 @@ def main(argv):
     if not argv[1:] or argv[1] == '-h' or argv[1] == '--help':
         return __doc__
 
-    with open('/dev/null', 'w') as fd:
-        retcode = subprocess.call(argv[1:], stdout=fd, stderr=fd)
+    dn = subprocess.DEVNULL
+    retcode = subprocess.call(argv[1:], stdout=dn, stderr=dn)
     print(retcode)
     return retcode
 
