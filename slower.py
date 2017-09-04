@@ -24,7 +24,10 @@ def main(argv):
     except (IndexError, ValueError):
         wait = 1.0
 
-    return slower(wait)
+    try:
+        return slower(wait)
+    except KeyboardInterrupt:
+        return
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
