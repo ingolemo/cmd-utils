@@ -21,6 +21,7 @@ import re
 import sys
 import time
 
+
 def parse(args):
     arg = args[1]
     regex = r'((?P<h>[0-9]+)h)?((?P<m>[0-9]+)m?)??((?P<s>[0-9]+)s)?'
@@ -32,6 +33,7 @@ def parse(args):
     times = [d.get(a, 0) or 0 for a in 'hms']
     h, m, s = [int(a) for a in times]
     return datetime.timedelta(seconds=(h * 60 + m) * 60 + s)
+
 
 def main(argv):
     if '-h' in argv or '--help' in argv:
@@ -54,6 +56,7 @@ def main(argv):
             time.sleep(1)
         except KeyboardInterrupt:
             return 1
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

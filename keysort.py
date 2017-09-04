@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Usage: keysort <subcommand>...
 
 Sorts lines of stdin based on the output of feeding that line into the

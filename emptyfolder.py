@@ -10,6 +10,7 @@ import os
 import pathlib
 import sys
 
+
 def main(args):
     if '-h' in args or '--help' in args:
         return __doc__
@@ -23,6 +24,7 @@ def main(args):
     files = list(folder.iterdir())
     if files:
         return 1
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

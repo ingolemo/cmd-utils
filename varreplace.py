@@ -45,5 +45,6 @@ def main(argv):
                 line = line.replace(variant, value)
         sys.stdout.write(line)
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

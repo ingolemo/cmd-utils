@@ -95,8 +95,10 @@ OFFSETS = {
 
 def build_synccmd(source, dest, linkdests=(), remote=False):
     'builds rsync command list from arguments'
-    rargs = [item for items in RSYNC_ARGS.items() for item in items
-             if item is not None]
+    rargs = [
+        item for items in RSYNC_ARGS.items() for item in items
+        if item is not None
+    ]
     for linkdest in linkdests:
         rargs.extend(['--link-dest', linkdest])
     if sys.stdout.isatty():
@@ -119,7 +121,8 @@ def execute(cmd, output=False):
 def wanted_backups(all_backups, now, datefmt):
     def is_younger(folder, wanted_time):
         backup_time = datetime.datetime.strptime(
-            os.path.basename(folder), datefmt)
+            os.path.basename(folder), datefmt
+        )
         return backup_time > wanted_time
 
     wanted_time = now
@@ -140,7 +143,8 @@ def parse_args(args):
     parser.add_argument(
         '--date-format',
         default='%Y_%m_%d_%H_%M_%S',
-        help='Date format for backup folders (default: "%%Y_%%m_%%d_%%H_%%M_%%S").'
+        help=
+        'Date format for backup folders (default: "%%Y_%%m_%%d_%%H_%%M_%%S").'
     )
     return parser.parse_args(args[1:])
 
@@ -159,20 +163,24 @@ def main(argv):
         return 'dest does not exist'
 
     # get existing directories
-    backups = execute(make_cmd(
-        'find', args.destination,
-        '-maxdepth', '1',
-        '-mindepth', '1',
-        '-type', 'd'), output=True)
-    curr = os.path.join(
-        args.destination, now.strftime(args.date_format))
+    backups = execute(
+        make_cmd(
+            'find', args.destination, '-maxdepth', '1', '-mindepth', '1',
+            '-type', 'd'
+        ),
+        output=True
+    )
+    curr = os.path.join(args.destination, now.strftime(args.date_format))
 
     # create new directory
     execute(make_cmd('mkdir', curr))
 
     # rsync
     execute(
-        build_synccmd(args.source, curr, linkdests=backups, remote=args.remote))
+        build_synccmd(
+            args.source, curr, linkdests=backups, remote=args.remote
+        )
+    )
 
     # make symlink to most recent backup
     symlink_loc = os.path.join(args.destination, 'current')
@@ -184,6 +192,7 @@ def main(argv):
     for backup in backups:
         if backup not in wanted:
             execute(make_cmd('rm', '-rf', backup))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

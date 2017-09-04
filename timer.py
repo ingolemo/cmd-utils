@@ -24,5 +24,6 @@ def main(argv):
         else:
             print(datetime.datetime.now() - start, end='\r')
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

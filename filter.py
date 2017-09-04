@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Usage: filter <subcommand>...
 
 This script can filter the contents of stdin by reading it line by
@@ -23,8 +22,9 @@ import subprocess
 
 def test(command, line):
     cmdline = shlex.split(command)
-    cmdline = (cmdline.replace('{}', line) if '{}' in cmdline else
-               cmdline + [line])
+    cmdline = (
+        cmdline.replace('{}', line) if '{}' in cmdline else cmdline + [line]
+    )
 
     return subprocess.call(cmdline) == 0
 

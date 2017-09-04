@@ -9,6 +9,7 @@ import sys
 def main(argv):
     print(sum(float(n) for n in sys.stdin))
 
+
 if __name__ == '__main__':
     try:
         sys.exit(main(sys.argv))

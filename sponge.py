@@ -18,6 +18,7 @@ def main(argv):
         for bytes in output:
             file.write(bytes)
 
+
 if __name__ == '__main__':
     try:
         sys.exit(main(sys.argv))

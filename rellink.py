@@ -52,5 +52,6 @@ def main(argv):
     # print(target, name)
     os.symlink(target, name)
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

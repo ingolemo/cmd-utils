@@ -14,7 +14,6 @@ def make_padding(pad, sep):
         return ' ' * pad + sep + ' ' * pad
 
 
-
 def tabulate(text, sep, join):
     for textline in text.splitlines():
         cells = textline.split(sep)
@@ -45,10 +44,13 @@ def main(argv):
     data = sys.stdin.read()
     table = list(tabulate(data, args.separator, args.join_empty))
     pad = make_padding(args.padding, args.separator)
-    widths = [max([len(cell) for cell in col])
-              for col in itertools.zip_longest(*table, fillvalue='')]
+    widths = [
+        max([len(cell) for cell in col])
+        for col in itertools.zip_longest(*table, fillvalue='')
+    ]
     widths[-1] = 0
     print_table(table, widths, pad)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

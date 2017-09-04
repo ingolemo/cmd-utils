@@ -26,13 +26,11 @@ is the base of the database.
 '''
 
 logging.basicConfig(
-    format='%(message)s',
-    level=logging.INFO,
-    stream=sys.stderr)
+    format='%(message)s', level=logging.INFO, stream=sys.stderr
+)
 
 
 class Database:
-
     def __init__(self, base, init=False):
         self.base = pathlib.Path(base)
         self.tagbase = self.base.joinpath('tags')
@@ -273,6 +271,7 @@ def main(args):
 
         return func(db, args)
     print(args)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

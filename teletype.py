@@ -14,7 +14,11 @@ timings = {
     '\n': 0.9,
 
     # punctuation
-    '.': 0.4, ',': 0.4, ';': 0.4, '?': 0.4, '!': 0.4,
+    '.': 0.4,
+    ',': 0.4,
+    ';': 0.4,
+    '?': 0.4,
+    '!': 0.4,
 }
 
 
@@ -24,7 +28,8 @@ def main(argv):
             sys.stdout.write(char)
             sys.stdout.flush()
 
-            time.sleep(timings.get(char, default))
+            time.sleep(timings.get(char, default) * 0.5)
+
 
 if __name__ == '__main__':
     try:

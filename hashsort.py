@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Usage: hashsort
 
 Sorts lines in stdin according to the hash of those lines. Outputs
@@ -22,6 +21,7 @@ def main(argv):
 
     for line in sorted(sys.stdin, key=myhash):
         sys.stdout.write(line)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

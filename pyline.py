@@ -32,5 +32,6 @@ def main(argv):
         line = line.strip('\n')
         exec(argv[1])
 
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

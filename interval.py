@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Usage: interval
 
 Takes a stream of numbers on stdin and prints the intervals between

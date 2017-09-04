@@ -38,8 +38,9 @@ def main(argv):
         div = object()
 
     if div not in pdict:
-        return 'usage: {0} [{1}]'.format(os.path.basename(argv[0]),
-                                         '|'.join(sorted(pdict.keys())))
+        return 'usage: {0} [{1}]'.format(
+            os.path.basename(argv[0]), '|'.join(sorted(pdict.keys()))
+        )
 
     choices = sys.stdin.readlines()
     try:
@@ -49,6 +50,7 @@ def main(argv):
     else:
         choice = choices[lineno].strip()
         print(choice)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
