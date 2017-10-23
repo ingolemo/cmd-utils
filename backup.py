@@ -99,7 +99,7 @@ def build_synccmd(source, dest, linkdests=(), remote=False):
         item for items in RSYNC_ARGS.items() for item in items
         if item is not None
     ]
-    for linkdest in linkdests:
+    for linkdest in sorted(linkdests)[-18:]:
         rargs.extend(['--link-dest', linkdest])
     if sys.stdout.isatty():
         rargs.append('--progress')
