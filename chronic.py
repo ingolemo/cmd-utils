@@ -96,7 +96,7 @@ def main(argv):
     if retcode != 0 or uses_stderr:
         for is_err, string in output:
             std = sys.stderr if is_err else sys.stdout
-            print(string.rstrip('\n'), file=std)
+            print(string.rstrip('\n'), file=std, flush=True)
 
     return retcode
 
