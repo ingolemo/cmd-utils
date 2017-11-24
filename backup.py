@@ -142,9 +142,9 @@ def parse_args(args):
     )
     parser.add_argument(
         '--date-format',
-        default='%Y_%m_%d_%H_%M_%S',
+        default='%Y-%m-%dT%H%M%S',
         help=
-        'Date format for backup folders (default: "%%Y_%%m_%%d_%%H_%%M_%%S").'
+        'Date format for backup folders (default: iso-8601 -ish).'
     )
     return parser.parse_args(args[1:])
 
