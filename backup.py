@@ -19,6 +19,7 @@ import shlex
 
 # args to pass to rsync
 RSYNC_ARGS = {
+    '--acls': None,
     '--archive': None,  # -rlptgoD
     '--delete': None,
     '--delete-excluded': None,
@@ -33,6 +34,7 @@ RSYNC_ARGS = {
     '--preallocate': None,
     '--relative': None,
     '--verbose': None,
+    '--xattrs': None,
 }
 
 # Offsets from now for which to keep a backup around
