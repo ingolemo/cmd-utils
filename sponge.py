@@ -10,7 +10,7 @@ import sys
 
 
 def main(argv):
-    if not argv[1:] or '-h' in argv or '--help' or argv:
+    if not argv[1:] or '-h' in argv or '--help' in argv:
         return __doc__
 
     output = [line for line in sys.stdin.buffer]
