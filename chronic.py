@@ -73,6 +73,8 @@ def await_proc(proc, log):
             log.write(errt)
             log.flush()
             yield True, errt
+    proc.stdout.close()
+    proc.stderr.close()
 
 
 def xdg_cache_dir(name):
