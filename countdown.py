@@ -6,7 +6,8 @@ once the time has expired. Like `sleep`, but with a progress counter
 and takes times in a more human readable format.
 
 The time should be given with a number followed by a letter indicating
-the period. More than one time period can be given at once. If a number is given, but no letter then m (minutes) is assumed. Examples:
+the period. More than one time period can be given at once. If a number
+is given, but no letter then m (minutes) is assumed. Examples:
 
     countdown 3m                (3 minutes)
     countdown 10                (10 minutes)

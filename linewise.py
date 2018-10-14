@@ -2,7 +2,8 @@
 '''Usage: linewise <subcommand>...
 
 Runs a sub-command for each line in stdin, writing that line into the
-stdin of the sub-command and concatenating the outputs. Similar to xargs except that it uses stdin instead of command-line arguments.
+stdin of the sub-command and concatenating the outputs. Similar to xargs
+except that it uses stdin instead of command-line arguments.
 '''
 
 import sys

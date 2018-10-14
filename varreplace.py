@@ -10,6 +10,8 @@ Example:
     $ echo 'Praise be to ${DIETY}.' | varreplace DIETY=Iluvatar
     Praise be to Iluvatar.
     $ echo 'Display number: "$DISPLAY"' | varreplace --env
+    Display number: ":0"
+    $ echo 'Display number: "$DISPLAY"' | varreplace DISPLAY
     Display number: ":0" '''
 
 import os
