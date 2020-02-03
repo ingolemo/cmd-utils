@@ -31,11 +31,20 @@ def walk(file):
 
 
 def move(source, dest):
-    print('moving', source, 'to', dest)
+    print(
+        'Moving file',
+        f'\tFrom: {source}',
+        f'\tTo:   {dest}',
+        sep='\n',
+    )
     if dest.exists():
-        raise Exception(
-            f'Cannot move {source} to {dest}, destination already exists'
-        )
+        print('But destination already exists.')
+        answer = input('Overwrite? ')
+        if not answer.lower().startswith('y'):
+
+            raise Exception(
+                f'Cannot move {source} to {dest}, destination already exists'
+            )
 
     dest.parent.mkdir(parents=True, exist_ok=True)
 
