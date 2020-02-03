@@ -17,13 +17,18 @@ import subprocess
 import argparse
 import shlex
 
+excludes = os.path.join(
+    os.path.expanduser(os.environ.get('XDG_CONFIG_HOME', '~/.config')),
+    'backup_excludes',
+)
+
 # args to pass to rsync
 RSYNC_ARGS = {
     '--acls': None,
     '--archive': None,  # -rlptgoD
     '--delete': None,
     '--delete-excluded': None,
-    '--exclude-from': os.path.expanduser('~/doc/backup_excludes'),
+    '--exclude-from': excludes,
     '--hard-links': None,
     '--human-readable': None,
     '--inplace': None,
