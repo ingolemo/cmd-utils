@@ -31,19 +31,19 @@ def set_nonblocking(fileobject):
 
 def get_logfile(cmd):
     "Converts a command list to a valid file name for the log."
-    replacements = {'/': '7', ' ': '_', '$': 'S', '"': '', '&': '8'}
-    sanitised = '_'.join(cmd)
+    replacements = {"/": "7", " ": "_", "$": "S", '"': "", "&": "8"}
+    sanitised = "_".join(cmd)
     for key, value in replacements.items():
         sanitised = sanitised.replace(key, value)
-    return '{}.log'.format(sanitised)
+    return "{}.log".format(sanitised)
 
 
 def run_cmd(cmd, logfile):
     "Runs a cmd list, capturing and logging stdio."
     proc = subprocess.Popen(cmd, stdout=PIPE, stderr=PIPE, bufsize=1)
-    with open(logfile, 'w') as log:
-        log.write('run {}\n'.format(cmd))
-        log.write('\tat {}\n\n'.format(datetime.datetime.now()))
+    with open(logfile, "w") as log:
+        log.write("run {}\n".format(cmd))
+        log.write("\tat {}\n\n".format(datetime.datetime.now()))
         log.flush()
         output = list(await_proc(proc, log))
     return proc.returncode, output
@@ -78,8 +78,8 @@ def await_proc(proc, log):
 
 
 def xdg_cache_dir(name):
-    default = pathlib.Path('~/.cache').expanduser()
-    base = pathlib.Path(os.environ.get('XDG_CACHE_HOME', default))
+    default = pathlib.Path("~/.cache").expanduser()
+    base = pathlib.Path(os.environ.get("XDG_CACHE_HOME", default))
     fname = base / name
     if not fname.exists():
         fname.mkdir()
@@ -87,23 +87,23 @@ def xdg_cache_dir(name):
 
 
 def main(argv):
-    if not argv[1:] or '-h' in argv or '--help' in argv:
+    if not argv[1:] or "-h" in argv or "--help" in argv:
         return __doc__
 
     cmd = argv[1:]
-    logfile = os.path.join(xdg_cache_dir('chronic'), get_logfile(cmd))
+    logfile = os.path.join(xdg_cache_dir("chronic"), get_logfile(cmd))
     retcode, output = run_cmd(cmd, logfile)
     uses_stderr = any(is_err for is_err, string in output)
 
     if retcode != 0 or uses_stderr:
         for is_err, string in output:
             std = sys.stderr if is_err else sys.stdout
-            print(string.rstrip('\n'), file=std, flush=True)
+            print(string.rstrip("\n"), file=std, flush=True)
 
     return retcode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         sys.exit(main(sys.argv))
     except KeyboardInterrupt:

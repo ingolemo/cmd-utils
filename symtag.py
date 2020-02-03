@@ -10,7 +10,7 @@ import random
 
 import docopt
 
-__doc__ = '''
+__doc__ = """
 Usage:
     symtag init <base>
     symtag add <base> <files>...
@@ -23,19 +23,17 @@ Usage:
 
 Symtag is a symlink based database. <base> should be a directory that
 is the base of the database.
-'''
+"""
 
-logging.basicConfig(
-    format='%(message)s', level=logging.INFO, stream=sys.stderr
-)
+logging.basicConfig(format="%(message)s", level=logging.INFO, stream=sys.stderr)
 
 
 class Database:
     def __init__(self, base, init=False):
         self.base = pathlib.Path(base)
-        self.tagbase = self.base.joinpath('tags')
-        self.filebase = self.base.joinpath('files')
-        self.dotfile = self.base.joinpath('.symtag.conf')
+        self.tagbase = self.base.joinpath("tags")
+        self.filebase = self.base.joinpath("files")
+        self.dotfile = self.base.joinpath(".symtag.conf")
 
         if init:
             self.tagbase.mkdir(parents=True)
@@ -43,7 +41,7 @@ class Database:
             self.dotfile.touch()
 
         if not self.dotfile.is_file():
-            raise ValueError('Database {} is invalid'.format(self.base))
+            raise ValueError("Database {} is invalid".format(self.base))
 
         self.base = self.base.resolve()
         self.tagbase = self.tagbase.resolve()
@@ -51,7 +49,7 @@ class Database:
         self.dotfile = self.dotfile.resolve()
 
     def _get_tagdir(self, tag, ensure_exists=False):
-        'Converts a tag into a tag directory, optionally creating it'
+        "Converts a tag into a tag directory, optionally creating it"
         if not self.is_valid_tag(tag):
             raise ValueError('Invalid tag "{}"'.format(tag))
         tagdir = self.tagbase.joinpath(tag)
@@ -70,38 +68,38 @@ class Database:
         return taglink
 
     def is_valid_file(self, file):
-        'Returns if file is in the database'
+        "Returns if file is in the database"
         try:
             file = file.resolve()
             file.relative_to(self.filebase)
             if file.is_dir():
-                raise ValueError('{} is directory'.format(file))
+                raise ValueError("{} is directory".format(file))
             if file.is_symlink():
-                raise ValueError('{} is symlink'.format(file))
+                raise ValueError("{} is symlink".format(file))
         except ValueError:
             return False
         return True
 
     def is_valid_tag(self, tag):
-        valid_chars = string.ascii_lowercase + string.digits + '_'
+        valid_chars = string.ascii_lowercase + string.digits + "_"
         return all(a in valid_chars for a in tag)
 
     def is_valid_taglink(self, taglink):
-        'Returns if a tag file is valid'
+        "Returns if a tag file is valid"
         if not taglink.exists():
             return False
         if not taglink.is_symlink():
-            logging.warning('{} is not a symlink'.format(taglink))
+            logging.warning("{} is not a symlink".format(taglink))
             return False
         return True
 
     def is_valid_tag_to(self, file, tag):
-        'Returns whether a file has a particular tag'
+        "Returns whether a file has a particular tag"
         taglink = self._get_taglink(tag, file)
         if not self.is_valid_taglink(taglink):
             return False
         if taglink.resolve() != file.resolve():
-            logging.warning('Tag does not link to file')
+            logging.warning("Tag does not link to file")
             return False
         return True
 
@@ -117,19 +115,19 @@ class Database:
         return files
 
     def add_file(self, file):
-        dest = self.base.joinpath('files', file.name)
+        dest = self.base.joinpath("files", file.name)
         if dest.exists():
-            logging.info('{} already exists'.format(dest.name))
+            logging.info("{} already exists".format(dest.name))
             return
-        logging.info('Adding {}'.format(file))
+        logging.info("Adding {}".format(file))
         copy_file(file, dest)
 
     def remove_file(self, file):
         if not self.is_valid_file(file):
-            raise ValueError('{} not in database'.format(file))
+            raise ValueError("{} not in database".format(file))
         for tag in self.tags_on_file(file):
             self.remove_tag(file, tag)
-        logging.info('Removing file {}'.format(file.name))
+        logging.info("Removing file {}".format(file.name))
         file.unlink()
 
     def add_tag(self, file, tag):
@@ -137,18 +135,18 @@ class Database:
         try:
             taglink.symlink_to(file)
         except FileExistsError:
-            logging.info('{} already tagged {}'.format(file.name, tag))
+            logging.info("{} already tagged {}".format(file.name, tag))
         else:
-            logging.info('Added {} to {}'.format(tag, file.name))
+            logging.info("Added {} to {}".format(tag, file.name))
 
     def remove_tag(self, file, tag):
         taglink = self._get_taglink(tag, file)
         try:
             taglink.unlink()
         except FileNotFoundError:
-            logging.info('{} not tagged {}'.format(file.name, tag))
+            logging.info("{} not tagged {}".format(file.name, tag))
         else:
-            logging.info('Removed {} from {}'.format(tag, file.name))
+            logging.info("Removed {} from {}".format(tag, file.name))
 
         # if tag is completely empty remove it
         if not self.files_with_tag(tag):
@@ -189,32 +187,32 @@ def load_file(fname):
 def parse_tag_changes(tags):
     plus, minus = set(), set()
     for tag in tags:
-        bag = minus if tag.endswith('-') else plus
-        bag.add(tag.rstrip('+-'))
+        bag = minus if tag.endswith("-") else plus
+        bag.add(tag.rstrip("+-"))
     return plus, minus
 
 
 def copy_file(source, dest):
-    with source.open('rb') as source_fd:
-        with dest.open('wb') as dest_fd:
+    with source.open("rb") as source_fd:
+        with dest.open("wb") as dest_fd:
             dest_fd.write(source_fd.read())
 
 
 def action_addfiles(db, args):
-    for fname in args['<files>']:
+    for fname in args["<files>"]:
         source = load_file(fname)
         db.add_file(source)
 
 
 def action_rmfiles(db, args):
-    for fname in args['<files>']:
+    for fname in args["<files>"]:
         file = load_file(fname)
         db.remove_file(file)
 
 
 def action_tagfile(db, args):
-    dest = load_file(args['<file>'])
-    plus, minus = parse_tag_changes(args['<tags>'])
+    dest = load_file(args["<file>"])
+    plus, minus = parse_tag_changes(args["<tags>"])
     for tag in plus:
         db.add_tag(dest, tag)
     for tag in minus:
@@ -222,7 +220,7 @@ def action_tagfile(db, args):
 
 
 def action_listfiles(db, args):
-    tags = ' '.join(args['<tags>'])
+    tags = " ".join(args["<tags>"])
     for file in db.query(tags):
         print(file)
 
@@ -233,14 +231,14 @@ def action_listalltags(db, args):
 
 
 def action_listtags(db, args):
-    file = load_file(args['<file>'])
+    file = load_file(args["<file>"])
     tags = db.tags_on_file(file)
-    print(' '.join(sorted(tags)))
+    print(" ".join(sorted(tags)))
 
 
 def action_leasttagged(db, args):
     numtags = lambda f: len(set(db.tags_on_file(f)))
-    #return min(db.all_files(), key=numtags)
+    # return min(db.all_files(), key=numtags)
     lowest = 10000000, None
     for file in sorted(db.all_files(), key=lambda a: random.random()):
         n = numtags(file)
@@ -254,16 +252,16 @@ def action_leasttagged(db, args):
 
 def main(args):
     args = docopt.docopt(__doc__)
-    db = Database(args['<base>'], init=args['init'])
+    db = Database(args["<base>"], init=args["init"])
     cmds = {
-        'init': lambda *args: None,
-        'add': action_addfiles,
-        'rm': action_rmfiles,
-        'tag': action_tagfile,
-        'ls': action_listfiles,
-        'leasttagged': action_leasttagged,
-        'listalltags': action_listalltags,
-        'listtags': action_listtags,
+        "init": lambda *args: None,
+        "add": action_addfiles,
+        "rm": action_rmfiles,
+        "tag": action_tagfile,
+        "ls": action_listfiles,
+        "leasttagged": action_leasttagged,
+        "listalltags": action_listalltags,
+        "listtags": action_listtags,
     }
     for cmd, func in cmds.items():
         if not args.get(cmd):
@@ -273,5 +271,5 @@ def main(args):
     print(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main(sys.argv))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''Usage: countdown [hours]h[minutes]m[seconds]s
+"""Usage: countdown [hours]h[minutes]m[seconds]s
 
 Takes a time specifier and counts down that amount of time, exiting
 once the time has expired. Like `sleep`, but with a progress counter
@@ -15,7 +15,7 @@ is given, but no letter then m (minutes) is assumed. Examples:
     countdown 9h30m             (9 and a half hours)
     countdown 1h30              (1 hour and 30 minutes)
     countdown 1h30s             (1 hour and 30 seconds)
-'''
+"""
 
 import datetime
 import re
@@ -25,19 +25,19 @@ import time
 
 def parse(args):
     arg = args[1]
-    regex = r'((?P<h>[0-9]+)h)?((?P<m>[0-9]+)m?)??((?P<s>[0-9]+)s)?'
+    regex = r"((?P<h>[0-9]+)h)?((?P<m>[0-9]+)m?)??((?P<s>[0-9]+)s)?"
     match = re.fullmatch(regex, arg)
     if not match:
-        raise ValueError('cannot parse string')
+        raise ValueError("cannot parse string")
     d = match.groupdict()
 
-    times = [d.get(a, 0) or 0 for a in 'hms']
+    times = [d.get(a, 0) or 0 for a in "hms"]
     h, m, s = [int(a) for a in times]
     return datetime.timedelta(seconds=(h * 60 + m) * 60 + s)
 
 
 def main(argv):
-    if '-h' in argv or '--help' in argv:
+    if "-h" in argv or "--help" in argv:
         return __doc__
 
     try:
@@ -50,7 +50,7 @@ def main(argv):
         now = datetime.datetime.now()
         passed = now - start
         left = length - passed
-        print(left, end='\r')
+        print(left, end="\r")
         if passed > length:
             break
         try:
@@ -59,5 +59,5 @@ def main(argv):
             return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main(sys.argv))

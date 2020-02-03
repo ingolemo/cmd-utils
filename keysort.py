@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''Usage: keysort <subcommand>...
+"""Usage: keysort <subcommand>...
 
 Sorts lines of stdin based on the output of feeding that line into the
 stdin of the subcommand. Allows you to sort a stream based on things
@@ -8,7 +8,7 @@ other than the contents of the stream itself.
 In this example we sort files in the current working directory by their last modified time:
 
     ls | keysort xargs stat --format %Y
-'''
+"""
 
 import sys
 import subprocess
@@ -23,7 +23,7 @@ def pipe(cmd, input):
 
 
 def main(argv):
-    if not argv[1:] or '-h' in argv or '--help' in argv:
+    if not argv[1:] or "-h" in argv or "--help" in argv:
         return __doc__
 
     my_key = functools.partial(pipe, argv[1:])
@@ -31,5 +31,5 @@ def main(argv):
         sys.stdout.write(line)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main(sys.argv))
