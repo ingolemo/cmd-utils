@@ -133,7 +133,7 @@ def build_synccmd(source, dest, linkdests=(), remote=False):
 def execute(cmd, output=False):
     print("$", *(shlex.quote(a) for a in cmd))
     if not output:
-        return subprocess.call(cmd)
+        return subprocess.run(cmd, check=True).returncode
     else:
         out = subprocess.check_output(cmd).decode().strip()
         return out.split("\n") if out else []
@@ -174,9 +174,6 @@ def main(argv):
             return ("ssh", args.remote) + cmd
         else:
             return cmd
-
-    if execute(make_cmd('test', '-d', args.destination)) != 0:
-        return 'dest does not exist'
 
     # get existing directories
     backups = execute(
