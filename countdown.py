@@ -36,6 +36,12 @@ def parse(args):
     return datetime.timedelta(seconds=(h * 60 + m) * 60 + s)
 
 
+def format_delta(delta):
+    total_minutes, seconds = divmod(delta.total_seconds(), 60)
+    total_hours, minutes = divmod(total_minutes, 60)
+    return f"{int(total_hours):02}:{int(minutes):02}:{int(seconds):02}"
+
+
 def main(argv):
     if "-h" in argv or "--help" in argv:
         return __doc__
@@ -45,16 +51,16 @@ def main(argv):
     except (IndexError, ValueError):
         return __doc__
     start = datetime.datetime.now()
+    finish = start + length
 
     while True:
         now = datetime.datetime.now()
-        passed = now - start
-        left = length - passed
-        print(left, end="\r")
-        if passed > length:
+        left = finish - now
+        print(format_delta(left), end="\r")
+        if now > finish:
             break
         try:
-            time.sleep(1)
+            time.sleep(0.2)
         except KeyboardInterrupt:
             return 1
 
