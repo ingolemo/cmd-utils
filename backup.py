@@ -10,12 +10,12 @@ delete backups that are too old using a sort of exponential backoff to
 keep fewer backups as they go further into the past.
 """
 
-import os
-import sys
-import datetime
-import subprocess
 import argparse
+import datetime
+import os
 import shlex
+import subprocess
+import sys
 
 # args to pass to rsync
 RSYNC_ARGS = {
@@ -121,7 +121,7 @@ def build_synccmd(source, dest, linkdests=(), remote=False, exclude_file=None):
     for linkdest in sorted(linkdests)[-18:]:
         rargs.extend(["--link-dest", linkdest])
     if sys.stdout.isatty():
-        rargs.append('--progress')
+        rargs.append("--progress")
     if remote:
         dest = "{}:{}".format(remote, dest)
     cmd = ["/usr/bin/rsync"] + rargs + [source, dest]
@@ -184,7 +184,14 @@ def main(argv):
     # get existing directories
     backups = execute(
         make_cmd(
-            "find", args.destination, "-maxdepth", "1", "-mindepth", "1", "-type", "d",
+            "find",
+            args.destination,
+            "-maxdepth",
+            "1",
+            "-mindepth",
+            "1",
+            "-type",
+            "d",
         ),
         output=True,
     )

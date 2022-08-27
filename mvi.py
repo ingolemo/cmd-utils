@@ -14,8 +14,8 @@ The name is a pun on `mv` and `vi`.
 The code is somewhat careful not to lose any data, but it's hard to know
 all the edge cases in situations like this. USE AT YOUR OWN RISK!"""
 
-import pathlib
 import os
+import pathlib
 import subprocess
 import sys
 import tempfile
@@ -42,7 +42,6 @@ def move(source, dest):
             )
 
     dest.parent.mkdir(parents=True, exist_ok=True)
-
     source.rename(dest)
     for parent in source.parents:
         contents = list(parent.iterdir())
