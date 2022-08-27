@@ -17,18 +17,12 @@ import subprocess
 import argparse
 import shlex
 
-excludes = os.path.join(
-    os.path.expanduser(os.environ.get("XDG_CONFIG_HOME", "~/.config")),
-    "backup_excludes",
-)
-
 # args to pass to rsync
 RSYNC_ARGS = {
     "--acls": None,
     "--archive": None,  # -rlptgoD
     "--delete": None,
     "--delete-excluded": None,
-    "--exclude-from": excludes,
     "--hard-links": None,
     "--human-readable": None,
     "--inplace": None,
@@ -117,9 +111,13 @@ OFFSETS = {
 }
 
 
-def build_synccmd(source, dest, linkdests=(), remote=False):
+
+def build_synccmd(source, dest, linkdests=(), remote=False, exclude_file=None):
     "builds rsync command list from arguments"
     rargs = [item for items in RSYNC_ARGS.items() for item in items if item is not None]
+    if exclude_file is not None:
+        rargs.append("--exclude-from")
+        rargs.append(exclude_file)
     for linkdest in sorted(linkdests)[-18:]:
         rargs.extend(["--link-dest", linkdest])
     if sys.stdout.isatty():
@@ -157,6 +155,14 @@ def parse_args(args):
     parser.add_argument("source")
     parser.add_argument("destination")
     parser.add_argument("--remote", default=None, help="remote server for ssh")
+    parser.add_argument(
+        "--exclude-file",
+        default=os.path.join(
+            os.path.expanduser(os.environ.get("XDG_CONFIG_HOME", "~/.config")),
+            "backup_excludes",
+        ),
+        help="file containing excluded backups",
+    )
     parser.add_argument(
         "--date-format",
         default="%Y-%m-%dT%H%M%S",
