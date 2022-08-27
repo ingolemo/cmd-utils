@@ -11,6 +11,7 @@ keep fewer backups as they go further into the past.
 """
 
 import argparse
+import contextlib
 import datetime
 import os
 import shlex
@@ -34,6 +35,7 @@ RSYNC_ARGS = {
     "--relative": None,
     "--verbose": None,
     "--xattrs": None,
+    # "--checksum": None,
 }
 
 # Offsets from now for which to keep a backup around
@@ -110,6 +112,7 @@ OFFSETS = {
     datetime.timedelta(days=365 * 100),
 }
 
+LOCKFILE = ".lockfile"
 
 
 def build_synccmd(source, dest, linkdests=(), remote=False, exclude_file=None):
@@ -128,13 +131,13 @@ def build_synccmd(source, dest, linkdests=(), remote=False, exclude_file=None):
     return cmd
 
 
-def execute(cmd, output=False):
+def execute(cmd, output=False, check=True):
     print("$", *(shlex.quote(a) for a in cmd))
-    if not output:
-        return subprocess.run(cmd, check=True).returncode
-    else:
+    if output:
         out = subprocess.check_output(cmd).decode().strip()
         return out.split("\n") if out else []
+    else:
+        return subprocess.run(cmd, check=check).returncode
 
 
 def wanted_backups(all_backups, now, datefmt):
@@ -171,6 +174,26 @@ def parse_args(args):
     return parser.parse_args(args[1:])
 
 
+@contextlib.contextmanager
+def atomic_directory(make_cmd, path):
+    try:
+        yield
+    except Exception:
+        execute(make_cmd("rm", "-rf", path))
+        raise
+
+
+@contextlib.contextmanager
+def lockfile(make_cmd, lockfile):
+    if execute(make_cmd("test", "-f", lockfile), check=False) == 0:
+        raise Exception(f"could not grab lock {lockfile}, exists")
+    execute(make_cmd("touch", lockfile))
+    try:
+        yield
+    finally:
+        execute(make_cmd("rm", lockfile))
+
+
 def main(argv):
     now = datetime.datetime.now()
     args = parse_args(argv)
@@ -197,22 +220,32 @@ def main(argv):
     )
     curr = os.path.join(args.destination, now.strftime(args.date_format))
 
-    # create new directory
-    execute(make_cmd("mkdir", curr))
+    with lockfile(make_cmd, os.path.join(args.destination, ".lockfile")):
+        # create new directory
+        execute(make_cmd("mkdir", curr))
 
-    # rsync
-    execute(build_synccmd(args.source, curr, linkdests=backups, remote=args.remote))
+        # rsync
+        with atomic_directory(make_cmd, curr):
+            execute(
+                build_synccmd(
+                    args.source,
+                    curr,
+                    linkdests=backups,
+                    remote=args.remote,
+                    exclude_file=args.exclude_file,
+                )
+            )
 
-    # make symlink to most recent backup
-    symlink_loc = os.path.join(args.destination, "current")
-    execute(make_cmd("rm", "-f", symlink_loc))
-    execute(make_cmd("ln", "-sr", curr, symlink_loc))
+        # make symlink to most recent backup
+        symlink_loc = os.path.join(args.destination, "current")
+        execute(make_cmd("rm", "-f", symlink_loc))
+        execute(make_cmd("ln", "-sr", curr, symlink_loc))
 
-    # remove unwanted directories
-    wanted = set(wanted_backups(backups, now, args.date_format))
-    for backup in backups:
-        if backup not in wanted:
-            execute(make_cmd("rm", "-rf", backup))
+        # remove unwanted directories
+        wanted = set(wanted_backups(backups, now, args.date_format))
+        for backup in backups:
+            if backup not in wanted:
+                execute(make_cmd("rm", "-rf", backup))
 
 
 if __name__ == "__main__":
