@@ -219,7 +219,7 @@ def main(argv):
 
         # remove unwanted directories
         wanted = set(wanted_backups(backups, now, args.date_format))
-        for backup in backups:
+        for backup in sorted(backups, reverse=True):
             if backup not in wanted:
                 execute(make_cmd("rm", "-rf", backup))
 
