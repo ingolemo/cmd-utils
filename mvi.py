@@ -20,10 +20,13 @@ import pathlib
 import random
 import subprocess
 import sys
+from typing import Iterable, Optional
+
+REMOVE_CMDS = {"delete", "remove", "rm", "del", "unlink"}
 
 
-def walk(file):
-    file = pathlib.Path(file).resolve()
+def walk(file: pathlib.Path) -> Iterable[pathlib.Path]:
+    file = file.resolve()
     if file.is_dir():
         for subfile in file.iterdir():
             yield from walk(subfile)
@@ -31,7 +34,7 @@ def walk(file):
         yield file
 
 
-def maybe_remove_parents(source: pathlib.Path):
+def maybe_remove_parents(source: pathlib.Path) -> None:
     for parent in source.parents:
         contents = list(parent.iterdir())
         if contents:
@@ -39,16 +42,7 @@ def maybe_remove_parents(source: pathlib.Path):
         parent.rmdir()
 
 
-def delete(source):
-    answer = input("Are you sure you want to delete it? ")
-    if not answer.lower().startswith("y"):
-        raise Exception()
-
-    source.unlink()
-    maybe_remove_parents(source)
-
-
-def move(source, dest):
+def move(source: pathlib.Path, dest: pathlib.Path) -> None:
     if dest.exists():
         print("But destination already exists.")
         if source.samefile(dest):
@@ -91,43 +85,81 @@ def diff(left: str, right: str) -> str:
     opcodes = list(matcher.get_grouped_opcodes(n=1000000))
     for opcode in opcodes:
         for opcode_data in opcode:
-            opcode, left_start, left_end, right_start, right_end = opcode_data
+            op, left_start, left_end, right_start, right_end = opcode_data
             left_fragment = left[left_start:left_end]
             right_fragment = right[right_start:right_end]
-            if opcode == "equal":
+            if op == "equal":
                 assert left_fragment == right_fragment
                 result.append(left_fragment)
-            elif opcode == "replace":
+            elif op == "replace":
                 result.append(RED)
                 result.append(left_fragment)
                 result.append(GREEN)
                 result.append(right_fragment)
                 result.append(RESET)
-            elif opcode == "insert":
+            elif op == "insert":
                 result.append(GREEN)
                 result.append(right_fragment)
                 result.append(RESET)
-            elif opcode == "delete":
+            elif op == "delete":
                 result.append(RED)
                 result.append(left_fragment)
                 result.append(RESET)
             else:
-                raise Exception(opcode)
+                raise Exception(f"Unknown opcode: {op}")
     return "".join(result)
 
 
-def main(args):
+def sort_files(
+    files: dict[pathlib.Path, Optional[pathlib.Path]]
+) -> Iterable[tuple[pathlib.Path, Optional[pathlib.Path]]]:
+    files = files.copy()
+    while files:
+        candidates = [
+            (source, dest)
+            for source, dest in files.items()
+            if dest is None or dest not in files
+        ]
+        if not candidates:
+            raise Exception("filename cycle detected")
+        for source, dest in candidates:
+            yield source, dest
+            del files[source]
+
+
+def try_commit_file_changes(files: dict[pathlib.Path, Optional[pathlib.Path]]) -> None:
+    deletions = [source for source, dest in files.items() if dest is None]
+
+    if deletions:
+        print("The following files will be deleted:")
+        for deletion in deletions:
+            print(f"\t{deletion}")
+        answer = input("Confirm? ")
+        if not answer.lower().startswith("y"):
+            raise Exception()
+
+    for source, dest in sort_files(files):
+        if dest is None:
+            print("rm", source)
+            source.unlink()
+            maybe_remove_parents(source)
+        else:
+            print("mv", diff(str(source), str(dest)))
+            move(source, dest)
+
+
+def main(args: list[str]) -> int | str:
     if len(args) > 1 and args[1] in {"-h", "--help"}:
         print(__doc__)
-        return
+        return 0
 
     arg_files = args[1:]
     if not arg_files:
         arg_files = ["."]
 
-    all_files = []
+    all_files: list[pathlib.Path] = []
     for arg_file in arg_files:
-        all_files.extend(walk(arg_file))
+        all_files.extend(walk(pathlib.Path(arg_file)))
     all_files.sort()
     if not all_files:
         return "No files selected"
@@ -137,20 +169,23 @@ def main(args):
 
     result = edit(string)
 
+    file_changes: dict[pathlib.Path, Optional[pathlib.Path]] = dict()
+
     for line in result.splitlines():
         n, line = line.strip().split(" ", 1)
         source = all_files[int(n)]
 
-        if line in {"delete", "remove", "rm"}:
-            print("rm", source)
-            delete(source)
+        if line.lower() in REMOVE_CMDS:
+            file_changes[source] = None
             continue
 
         dest = pathlib.Path(line)
         if source != dest:
-            print("mv", diff(str(source), str(dest)))
-            move(source, dest)
+            file_changes[source] = dest
             continue
+
+    try_commit_file_changes(file_changes)
+    return 0
 
 
 if __name__ == "__main__":
