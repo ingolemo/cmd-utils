@@ -18,6 +18,10 @@ target="$1"
 name="$(basename $target | tr '_' '-')"
 extensions=".sh .py .bash .fish .pl .rb .awk"
 
+if [ ! -x "$target" ]; then
+	echo "Warning: ${target} not executable"
+fi
+
 for suff in $extensions; do
     name="${name%$suff}"
 done
