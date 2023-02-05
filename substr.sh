@@ -11,10 +11,6 @@ EOF
 	;;
 esac
 
-# Tests if a string contains a substring.
-
-# Usage: substr substring string
-
 substring="$1"
 string="$2"
 if [ "${string#*$substring}" != "$string" ]; then
