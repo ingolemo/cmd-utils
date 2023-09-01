@@ -49,7 +49,6 @@ def move(source: pathlib.Path, dest: pathlib.Path) -> None:
             print("They are hardlinks for one another.")
         answer = input("Overwrite? ")
         if not answer.lower().startswith("y"):
-
             raise Exception(
                 f"Cannot move {source} to {dest}, destination already exists"
             )
@@ -75,8 +74,9 @@ def edit(string: str) -> str:
 
 RESET = "\033[0m"
 BOLD = "\033[1m"
-RED = "\033[31m"
-GREEN = "\033[32m"
+FG_BLACK = "\033[30m"
+BG_RED = "\033[41m"
+BG_GREEN = "\033[42m"
 
 
 def diff(left: str, right: str) -> str:
@@ -92,17 +92,23 @@ def diff(left: str, right: str) -> str:
                 assert left_fragment == right_fragment
                 result.append(left_fragment)
             elif op == "replace":
-                result.append(RED)
+                result.append(BOLD)
+                result.append(FG_BLACK)
+                result.append(BG_RED)
                 result.append(left_fragment)
-                result.append(GREEN)
+                result.append(BG_GREEN)
                 result.append(right_fragment)
                 result.append(RESET)
             elif op == "insert":
-                result.append(GREEN)
+                result.append(BOLD)
+                result.append(FG_BLACK)
+                result.append(BG_GREEN)
                 result.append(right_fragment)
                 result.append(RESET)
             elif op == "delete":
-                result.append(RED)
+                result.append(BOLD)
+                result.append(FG_BLACK)
+                result.append(BG_RED)
                 result.append(left_fragment)
                 result.append(RESET)
             else:
