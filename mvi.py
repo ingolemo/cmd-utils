@@ -14,6 +14,7 @@ The name is a pun on `mv` and `vi`.
 The code is somewhat careful not to lose any data, but it's hard to know
 all the edge cases in situations like this. USE AT YOUR OWN RISK!"""
 
+import argparse
 import difflib
 import os
 import pathlib
@@ -25,11 +26,16 @@ from typing import Iterable, Optional
 REMOVE_CMDS = {"delete", "remove", "rm", "del", "unlink"}
 
 
-def walk(file: pathlib.Path) -> Iterable[pathlib.Path]:
+def walk(file: pathlib.Path, max_depth: None | int = None) -> Iterable[pathlib.Path]:
     file = file.resolve()
     if file.is_dir():
+        if max_depth is not None and max_depth <= 0:
+            yield file
+            return
+
+        new_depth = None if max_depth is None else max_depth - 1
         for subfile in file.iterdir():
-            yield from walk(subfile)
+            yield from walk(subfile, max_depth=new_depth)
     elif file.is_file():
         yield file
 
@@ -117,7 +123,7 @@ def diff(left: str, right: str) -> str:
 
 
 def sort_files(
-    files: dict[pathlib.Path, Optional[pathlib.Path]]
+    files: dict[pathlib.Path, Optional[pathlib.Path]],
 ) -> Iterable[tuple[pathlib.Path, Optional[pathlib.Path]]]:
     files = files.copy()
     while files:
@@ -154,18 +160,19 @@ def try_commit_file_changes(files: dict[pathlib.Path, Optional[pathlib.Path]]) -
             move(source, dest)
 
 
-def main(args: list[str]) -> int | str:
-    if len(args) > 1 and args[1] in {"-h", "--help"}:
-        print(__doc__)
-        return 0
+def parse_args(argv):
+    parser = argparse.ArgumentParser(usage=__doc__)
+    parser.add_argument("-d", "--max-depth", type=int, default=None)
+    parser.add_argument("files", nargs="*", default=["."])
+    return parser.parse_args(argv[1:])
 
-    arg_files = args[1:]
-    if not arg_files:
-        arg_files = ["."]
+
+def main(argv: list[str]) -> int | str:
+    args = parse_args(argv)
 
     all_files: list[pathlib.Path] = []
-    for arg_file in arg_files:
-        all_files.extend(walk(pathlib.Path(arg_file)))
+    for arg_file in args.files:
+        all_files.extend(walk(pathlib.Path(arg_file), max_depth=args.max_depth))
     all_files.sort()
     if not all_files:
         return "No files selected"
